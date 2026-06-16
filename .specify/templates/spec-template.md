@@ -70,13 +70,11 @@
 
 ### Edge Cases
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
-
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
+- EC-01: [Boundary condition → expected behavior]
+- EC-02: [Boundary condition → expected behavior]
+- EC-03: [Boundary condition → expected behavior]
+- EC-04: [Boundary condition → expected behavior]
+- EC-05: [Boundary condition → expected behavior]
 
 ## Requirements *(mandatory)*
 
@@ -98,10 +96,15 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
-### Key Entities *(include if feature involves data)*
+### Data Requirements *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+- **[Entity]**: { field, field, field }
+
+### Non-goals
+
+- [What is explicitly out of scope]
+- [What is explicitly out of scope]
+- [What is explicitly out of scope]
 
 ## Success Criteria *(mandatory)*
 
