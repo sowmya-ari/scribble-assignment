@@ -87,7 +87,7 @@ A player wants to leave a room they joined, or the host wants to cancel the game
 
 1. **Given** a non-host player is in the lobby, **When** they click "Leave Room", **Then** they exit the room and return to the landing page.
 2. **Given** a non-host player leaves, **When** the lobby refreshes for remaining players, **Then** the leaving player is removed from the player list.
-3. **Given** the host leaves the room, **Then** the room is disbanded and all players return to the landing page.
+3. **Given** the host leaves the room, **Then** the host role transfers to the next player (by join order) and the room continues.
 
 ---
 
@@ -110,7 +110,7 @@ When all players have left a room, the room is cleaned up and its code becomes a
 
 - EC-01: Player enters a code of the wrong format (too short/long) → clear error message about format
 - EC-02: Two players join simultaneously with the same code → both join the same room
-- EC-03: Host's browser tab is closed unexpectedly → other players see the host disconnect and are returned to landing page
+- EC-03: Host's browser tab is closed unexpectedly → other players see the host disconnected; after a timeout, host transfers to next player
 - EC-04: Network error during polling → lobby shows connection warning, retries silently
 - EC-05: Player attempts to join their own room via code → treated as already in room, no duplicate entry
 - EC-06: Maximum room capacity (8 players) is reached → subsequent join attempts get "Room is full" error
@@ -133,14 +133,14 @@ When all players have left a room, the room is cleaned up and its code becomes a
 - **FR-012**: The game MUST NOT start with fewer than 2 players in the room
 - **FR-013**: Host MUST receive feedback if they attempt to start with fewer than 2 players
 - **FR-014**: Players MUST be able to leave the room at any time before the game starts
-- **FR-015**: When the host leaves the room, the room MUST be disbanded and all players returned to the landing page
+- **FR-015**: When the host leaves the room, the host role MUST transfer to the next player (by join order) and the room MUST continue
 - **FR-016**: When a non-host player leaves, they MUST be removed from the player list and the lobby MUST update for remaining players
 - **FR-017**: When all players have left a room, the room MUST be destroyed and its code recycled
 - **FR-018**: System MUST handle polling failures gracefully (show connection warning, retry automatically)
 
 ### Data Requirements *(include if feature involves data)*
 
-- **Room**: { code: string, hostId: string, players: Player[], state: "waiting" | "in-progress" }
+- **Room**: { code: string, hostId: string, players: Player[], state: "lobby" | "in-progress" }
 - **Player**: { id: string, name: string }
 
 ### Non-goals

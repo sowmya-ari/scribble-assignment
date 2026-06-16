@@ -75,7 +75,7 @@ specs/001-room-setup-lobby/
 backend/
 ├── src/
 │   ├── models/
-│   │   └── game.ts          # +hostId to Room, +updatedAt types
+│   │   └── game.ts          # +hostId to Room
 │   ├── services/
 │   │   └── roomStore.ts     # +host logic, leave/capacity/cleanup
 │   └── api/
