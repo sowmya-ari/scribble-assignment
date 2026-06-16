@@ -1,50 +1,51 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Scribble Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Extend, Don't Rewrite
+Always extend the starter application. Preserve existing code, structure, and conventions. Refactor only when necessary for new functionality.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Keep It Simple & Deterministic
+Prefer straightforward solutions over clever ones. Behavior must be predictable — same inputs always produce same outputs. Avoid stateful complexity.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Follow Existing Project Structure
+New code must match established patterns: backend routes in `src/api/`, services in `src/services/`, models in `src/models/`. Frontend pages in `src/pages/`, components in `src/components/`, state in `src/state/`.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Avoid Unnecessary Dependencies
+Only add a dependency when it solves a concrete problem. Prefer built-in Node.js and React APIs. No utility libraries (lodash, etc.) unless already present.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. TypeScript First
+All new code must be fully typed. Avoid `any`; use `unknown` for truly dynamic types. Prefer immutable data structures and pure functions.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## AI Usage Rules
+- Specifications must be created before any implementation begins.
+- AI-generated code must be reviewed before committing.
+- Requirements take precedence over AI suggestions. When in doubt, follow the spec.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Testing & Quality Gates
+- Unit test coverage must be at least 80% (backend and frontend).
+- Validate every scenario using two browser tabs (host + guest perspective).
+- Backend and frontend builds must pass (`tsc` type-check / `vite build`) before any submission.
+- Acceptance criteria must be verified before moving to the next feature phase.
+- All business logic in the backend store must have unit tests.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Scope Constraints (Non-negotiable)
+The following items are intentionally out of scope. Do not build them, and do not include them in specs, plans, or tasks:
+- WebSockets or real-time sync
+- Databases or persistent storage
+- Authentication, accounts, or sessions
+- Deployment, hosting, CI, or Docker work
+- New state-management or routing libraries beyond what the starter ships
+- Multiple rounds, drawer rotation, timers, countdowns, speed bonuses, or drawer bonuses
+- Custom or random word packs
+- Spectator mode
+- Moderation features (kick, mute)
+- Room passwords or invite links
+- Rewriting the starter from scratch
+- Unjustified top-level dependencies
+- Unrelated refactors
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+This constitution supersedes all other practices. Amendments require documentation and approval. All reviews must verify compliance with these rules.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-06-16 | **Last Amended**: 2026-06-16
