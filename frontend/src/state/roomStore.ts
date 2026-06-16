@@ -98,6 +98,34 @@ class RoomStore {
     this.setRoomSnapshot(response.room);
     return response.room;
   }
+
+  async startGame() {
+    if (!this.state.room || !this.state.participantId) {
+      return;
+    }
+
+    await this.withLoading(() =>
+      api.startGame(this.state.room!.code, this.state.participantId!)
+    );
+  }
+
+  async leaveRoom() {
+    if (!this.state.room || !this.state.participantId) {
+      return;
+    }
+
+    await api.leaveRoom(this.state.room.code, this.state.participantId);
+    this.reset();
+  }
+
+  reset() {
+    this.setState({
+      room: null,
+      participantId: null,
+      error: null,
+      isLoading: false
+    });
+  }
 }
 
 const RoomStoreContext = createContext<RoomStore | null>(null);

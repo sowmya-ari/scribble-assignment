@@ -32,13 +32,13 @@ description: "Task list for Room Setup & Lobby feature"
 
 ⚠️ **CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T001 Update `Room` interface to add `hostId: string` in `backend/src/models/game.ts`
-- [ ] T002 [P] Update `RoomSnapshot` to include `hostId` field in `backend/src/models/game.ts`
-- [ ] T003 [P] Update `createRoomSchema` and `joinRoomSchema` — make `playerName` required (non-empty string) in `backend/src/api/schemas.ts`
-- [ ] T004 [P] Add `leaveRoomSchema` and handle 409 status in `backend/src/api/schemas.ts`
-- [ ] T005 [P] Update frontend API types to include `hostId` in `RoomSnapshot` in `frontend/src/services/api.ts`
-- [ ] T006 [P] Add `leaveRoom(code, participantId)` function to frontend API service in `frontend/src/services/api.ts`
-- [ ] T007 Update `roomStore` state to expose `hostId` from room snapshot in `frontend/src/state/roomStore.ts`
+- [x] T001 Update `Room` interface to add `hostId: string` in `backend/src/models/game.ts`
+- [x] T002 [P] Update `RoomSnapshot` to include `hostId` field in `backend/src/models/game.ts`
+- [x] T003 [P] Update `createRoomSchema` and `joinRoomSchema` — make `playerName` required (non-empty string) in `backend/src/api/schemas.ts`
+- [x] T004 [P] Add `leaveRoomSchema` and handle 409 status in `backend/src/api/schemas.ts`
+- [x] T005 [P] Update frontend API types to include `hostId` in `RoomSnapshot` in `frontend/src/services/api.ts`
+- [x] T006 [P] Add `leaveRoom(code, participantId)` function to frontend API service in `frontend/src/services/api.ts`
+- [x] T007 Update `roomStore` state to expose `hostId` from room snapshot in `frontend/src/state/roomStore.ts`
 
 **Checkpoint**: Foundation ready — all user stories can now begin.
 
@@ -52,14 +52,14 @@ description: "Task list for Room Setup & Lobby feature"
 
 ### Implementation
 
-- [ ] T008 [US1] Update `createRoom()` to store creator's participant ID as `hostId` in `backend/src/services/roomStore.ts`
-- [ ] T009 [US1] Update `toRoomSnapshot()` to include `hostId` in output in `backend/src/services/roomStore.ts`
-- [ ] T010 [US2] Add capacity check in `joinRoom()` — reject if participants.length >= 8 in `backend/src/services/roomStore.ts`
-- [ ] T011 [US2] Update `POST /rooms/:code/join` to return 409 for full rooms in `backend/src/api/rooms.ts`
-- [ ] T012 [US2] Improve frontend join form validation (empty code — "Please enter a room code") in `frontend/src/pages/JoinRoomPage.tsx`
-- [ ] T013 [US3] Add auto-polling with `setInterval` on LobbyPage mount (~2s) with cleanup on unmount in `frontend/src/pages/LobbyPage.tsx`
-- [ ] T014 [US3] Show connection warning on polling failure in `frontend/src/pages/LobbyPage.tsx`
-- [ ] T015 [US3] Display host indicator ("Host" badge) next to host player in lobby in `frontend/src/pages/LobbyPage.tsx`
+- [x] T008 [US1] Update `createRoom()` to store creator's participant ID as `hostId` in `backend/src/services/roomStore.ts`
+- [x] T009 [US1] Update `toRoomSnapshot()` to include `hostId` in output in `backend/src/services/roomStore.ts`
+- [x] T010 [US2] Add capacity check in `joinRoom()` — reject if participants.length >= 8 in `backend/src/services/roomStore.ts`
+- [x] T011 [US2] Update `POST /rooms/:code/join` to return 409 for full rooms in `backend/src/api/rooms.ts`
+- [x] T012 [US2] Improve frontend join form validation (empty code — "Please enter a room code") in `frontend/src/pages/JoinRoomPage.tsx`
+- [x] T013 [US3] Add auto-polling with `setInterval` on LobbyPage mount (~2s) with cleanup on unmount in `frontend/src/pages/LobbyPage.tsx`
+- [x] T014 [US3] Show connection warning on polling failure in `frontend/src/pages/LobbyPage.tsx`
+- [x] T015 [US3] Display host indicator ("Host" badge) next to host player in lobby in `frontend/src/pages/LobbyPage.tsx`
 
 **Checkpoint**: MVP complete — create, join, lobby auto-refresh all work independently.
 
@@ -73,12 +73,12 @@ description: "Task list for Room Setup & Lobby feature"
 
 ### Implementation
 
-- [ ] T016 [P] [US4] Add `startGame` endpoint — `POST /rooms/:code/start` with `participantId` body, verify host + player count in `backend/src/api/rooms.ts`
-- [ ] T017 [P] [US4] Add `startGameSchema` and wire 403 (not host) / 400 (<2 players) errors in `backend/src/api/schemas.ts`
-- [ ] T018 [P] [US4] Add `startGame()` service function — verify caller is host and room has >=2 players in `backend/src/services/roomStore.ts`
-- [ ] T019 [P] [US4] Add `startGame()` action to frontend roomStore in `frontend/src/state/roomStore.ts`
-- [ ] T020 [US4] Show "Start Game" button only for host, disabled with message when <2 players in `frontend/src/pages/LobbyPage.tsx`
-- [ ] T021 [US4] Add frontend API function `startGame(code, participantId)` in `frontend/src/services/api.ts`
+- [x] T016 [P] [US4] Add `startGame` endpoint — `POST /rooms/:code/start` with `participantId` body, verify host + player count in `backend/src/api/rooms.ts`
+- [x] T017 [P] [US4] Add `startGameSchema` and wire 403 (not host) / 400 (<2 players) errors in `backend/src/api/schemas.ts`
+- [x] T018 [P] [US4] Add `startGame()` service function — verify caller is host and room has >=2 players in `backend/src/services/roomStore.ts`
+- [x] T019 [P] [US4] Add `startGame()` action to frontend roomStore in `frontend/src/state/roomStore.ts`
+- [x] T020 [US4] Show "Start Game" button only for host, disabled with message when <2 players in `frontend/src/pages/LobbyPage.tsx`
+- [x] T021 [US4] Add frontend API function `startGame(code, participantId)` in `frontend/src/services/api.ts`
 
 **Checkpoint**: Host can start game. Non-hosts cannot.
 
@@ -92,10 +92,10 @@ description: "Task list for Room Setup & Lobby feature"
 
 ### Implementation
 
-- [ ] T022 [US5] Add `leaveRoom(participantId, room)` service function — remove participant, promote next if host, delete if empty in `backend/src/services/roomStore.ts`
-- [ ] T023 [US5] Add `POST /rooms/:code/leave` endpoint in `backend/src/api/rooms.ts`
-- [ ] T024 [US5] Add `leaveRoom()` action to frontend roomStore in `frontend/src/state/roomStore.ts`
-- [ ] T025 [US5] Add "Leave Room" button to LobbyPage for all players in `frontend/src/pages/LobbyPage.tsx`
+- [x] T022 [US5] Add `leaveRoom(participantId, room)` service function — remove participant, promote next if host, delete if empty in `backend/src/services/roomStore.ts`
+- [x] T023 [US5] Add `POST /rooms/:code/leave` endpoint in `backend/src/api/rooms.ts`
+- [x] T024 [US5] Add `leaveRoom()` action to frontend roomStore in `frontend/src/state/roomStore.ts`
+- [x] T025 [US5] Add "Leave Room" button to LobbyPage for all players in `frontend/src/pages/LobbyPage.tsx`
 
 **Checkpoint**: All P1 + P2 + P3 stories complete.
 
@@ -105,16 +105,16 @@ description: "Task list for Room Setup & Lobby feature"
 
 **Purpose**: Verify backend service logic and frontend API service.
 
-- [ ] T026 [P] Add unit test for host designation on create in `backend/src/services/roomStore.test.ts`
-- [ ] T027 [P] Add unit test for capacity enforcement (join when full) in `backend/src/services/roomStore.test.ts`
-- [ ] T028 [P] Add unit test for host transfer on leave in `backend/src/services/roomStore.test.ts`
-- [ ] T029 [P] Add unit test for room cleanup on last departure in `backend/src/services/roomStore.test.ts`
-- [ ] T030 [P] Add unit test for start-game host check in `backend/src/services/roomStore.test.ts`
-- [ ] T031 [P] Add API test for `leaveRoom` request in `frontend/src/services/api.test.ts`
-- [ ] T032 [P] Add test verifying existing code generation still produces unique 4-char codes in `backend/src/services/roomStore.test.ts`
-- [ ] T033 [P] Add test verifying existing invalid code still returns null/404 in `backend/src/services/roomStore.test.ts`
-- [ ] T034 [P] Add test verifying room isolation — two rooms with same player names don't interfere in `backend/src/services/roomStore.test.ts`
-- [ ] T035 Run `npm test` in both `backend/` and `frontend/` — all tests passing
+- [x] T026 [P] Add unit test for host designation on create in `backend/src/services/roomStore.test.ts`
+- [x] T027 [P] Add unit test for capacity enforcement (join when full) in `backend/src/services/roomStore.test.ts`
+- [x] T028 [P] Add unit test for host transfer on leave in `backend/src/services/roomStore.test.ts`
+- [x] T029 [P] Add unit test for room cleanup on last departure in `backend/src/services/roomStore.test.ts`
+- [x] T030 [P] Add unit test for start-game host check in `backend/src/services/roomStore.test.ts`
+- [x] T031 [P] Add API test for `leaveRoom` request in `frontend/src/services/api.test.ts`
+- [x] T032 [P] Add test verifying existing code generation still produces unique 4-char codes in `backend/src/services/roomStore.test.ts`
+- [x] T033 [P] Add test verifying existing invalid code throws RoomError in `backend/src/services/roomStore.test.ts`
+- [x] T034 [P] Add test verifying room isolation — two rooms with same player names don't interfere in `backend/src/services/roomStore.test.ts`
+- [x] T035 Run `npm test` in both `backend/` and `frontend/` — all tests passing
 
 ---
 

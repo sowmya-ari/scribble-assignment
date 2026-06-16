@@ -404,6 +404,14 @@ input {
   font-weight: 400;
 }
 
+.host-badge {
+  color: #d97706;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .status-line,
 .placeholder-note {
   width: max-content;
