@@ -77,20 +77,20 @@
 
 ### Backend Implementation
 
-- [ ] T017 [P] [US2] Add `submitGuessSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`, `text: string` with `.trim().min(1, "Guess cannot be empty")`)
-- [ ] T018 [P] [US2] Implement `submitGuess(code: string, participantId: string, text: string)` service in `backend/src/services/roomStore.ts` — trims, case-insensitive compares, rejects empty, rejects drawer, records guess, updates score to 100 if correct
-- [ ] T019 [US2] Add `POST /rooms/:code/guesses` route in `backend/src/api/rooms.ts` using `submitGuessSchema` and `submitGuess()`, returns `{ success, isCorrect, guess }`
+- [x] T017 [P] [US2] Add `submitGuessSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`, `text: string` with `.trim().min(1, "Guess cannot be empty")`)
+- [x] T018 [P] [US2] Implement `submitGuess(code: string, participantId: string, text: string)` service in `backend/src/services/roomStore.ts` — trims, case-insensitive compares, rejects empty, rejects drawer, records guess, updates score to 100 if correct
+- [x] T019 [US2] Add `POST /rooms/:code/guesses` route in `backend/src/api/rooms.ts` using `submitGuessSchema` and `submitGuess()`, returns `{ success, isCorrect, guess }`
 
 ### Frontend Implementation
 
-- [ ] T020 [P] [US2] Add `submitGuess(code: string, participantId: string, text: string)` method to API service in `frontend/src/services/api.ts`
-- [ ] T021 [US2] Update `GuessForm` in `frontend/src/components/GuessForm.tsx` to submit guess to API via `roomStore`, display error messages, show submission state
-- [ ] T022 [US2] Disable `GuessForm` for drawer in `frontend/src/pages/GamePage.tsx` — drawer sees a message instead of the form
+- [x] T020 [P] [US2] Add `submitGuess(code: string, participantId: string, text: string)` method to API service in `frontend/src/services/api.ts`
+- [x] T021 [US2] Update `GuessForm` in `frontend/src/components/GuessForm.tsx` to submit guess to API via `roomStore`, display error messages, show submission state
+- [x] T022 [US2] Disable `GuessForm` for drawer in `frontend/src/pages/GamePage.tsx` — drawer sees a message instead of the form
 
 ### Backend Tests
 
-- [ ] T023 [P] [US2] Unit tests for `submitGuess()` in `backend/src/services/roomStore.test.ts` — correct match, incorrect match, empty rejection, drawer rejection, already-correct stays 100
-- [ ] T024 [P] [US2] Unit tests for `submitGuessSchema` in `backend/src/api/schemas.test.ts` — valid body, empty text, whitespace-only text, missing fields
+- [x] T023 [P] [US2] Unit tests for `submitGuess()` in `backend/src/services/roomStore.test.ts` — correct match, incorrect match, empty rejection, drawer rejection, already-correct stays 100
+- [x] T024 [P] [US2] Unit tests for `submitGuessSchema` in `backend/src/api/schemas.test.ts` — valid body, empty text, whitespace-only text, missing fields
 
 **Checkpoint**: At this point, Guess Submission and Validation works — guessers can submit, validation enforced, drawers blocked.
 
