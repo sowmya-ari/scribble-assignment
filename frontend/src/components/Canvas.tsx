@@ -17,6 +17,7 @@ export function Canvas({ isDrawer, strokes, onStrokesChange }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentStroke, setCurrentStroke] = useState<{ x: number; y: number }[]>([]);
+  const currentStrokeRef = useRef<{ x: number; y: number }[]>([]);
 
   const renderStrokes = useCallback(() => {
     const canvas = canvasRef.current;
@@ -39,7 +40,20 @@ export function Canvas({ isDrawer, strokes, onStrokesChange }: CanvasProps) {
       }
       ctx.stroke();
     }
-  }, [strokes]);
+
+    if (currentStroke.length >= 2) {
+      ctx.beginPath();
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.moveTo(currentStroke[0].x, currentStroke[0].y);
+      for (let i = 1; i < currentStroke.length; i++) {
+        ctx.lineTo(currentStroke[i].x, currentStroke[i].y);
+      }
+      ctx.stroke();
+    }
+  }, [strokes, currentStroke]);
 
   useEffect(() => {
     renderStrokes();
@@ -60,23 +74,27 @@ export function Canvas({ isDrawer, strokes, onStrokesChange }: CanvasProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     canvas.setPointerCapture(event.pointerId);
+    const point = getCanvasPoint(event);
+    currentStrokeRef.current = [point];
+    setCurrentStroke([point]);
     setIsDrawing(true);
-    setCurrentStroke([getCanvasPoint(event)]);
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
     if (!isDrawing || !isDrawer) return;
-    setCurrentStroke((prev) => [...prev, getCanvasPoint(event)]);
+    const point = getCanvasPoint(event);
+    currentStrokeRef.current = [...currentStrokeRef.current, point];
 
     const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx || currentStroke.length === 0) return;
-    const point = getCanvasPoint(event);
+    if (!ctx) return;
+    const points = currentStrokeRef.current;
+    if (points.length < 2) return;
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 3;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.beginPath();
-    ctx.moveTo(currentStroke[currentStroke.length - 1].x, currentStroke[currentStroke.length - 1].y);
+    ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
     ctx.lineTo(point.x, point.y);
     ctx.stroke();
   }
@@ -85,15 +103,17 @@ export function Canvas({ isDrawer, strokes, onStrokesChange }: CanvasProps) {
     if (!isDrawing || !isDrawer) return;
     setIsDrawing(false);
 
-    if (currentStroke.length >= 2) {
+    const finalStroke = currentStrokeRef.current;
+    if (finalStroke.length >= 2) {
       const newStroke: CanvasStroke = {
         id: generateId(),
-        points: currentStroke,
+        points: finalStroke,
         color: "#000000",
         width: 3
       };
       onStrokesChange([...strokes, newStroke]);
     }
+    currentStrokeRef.current = [];
     setCurrentStroke([]);
   }
 
