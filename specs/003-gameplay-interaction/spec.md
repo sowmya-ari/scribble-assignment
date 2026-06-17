@@ -8,6 +8,15 @@
 
 **Input**: User description: "Given a round is active with a drawer and guessers (all scores start at 0), When the drawer draws/clears the canvas and guessers submit their guesses, Then the drawing is visible on all players' screens; guesses are trimmed, case-insensitively compared, and empty ones rejected; the guess history is synced to all players via polling; correct guesses score 100 (incorrect add 0)."
 
+## Clarifications
+
+### Session 2026-06-17
+
+- Q: How is drawing stroke data uploaded to the server? → A: The drawer POSTs the full canvas state (array of all strokes) to the server on each draw or clear action. The server replaces the stored state entirely — individual stroke appending is not used.
+- Q: Can the drawer customize stroke color and width? → A: No — fixed defaults (single color, single width) for MVP. The `color` and `width` fields in the data model are preserved for future extensibility but the initial UI uses one preset.
+- Q: Stroke color and width defaults → A: Color = black (#000000), width = 3px.
+- Q: What happens when the canvas state POST fails? → A: The drawer sees a brief error indicator ("Canvas save failed — draw again to retry"). No auto-retry. The next draw/clear action re-POSTs the full state.
+
 ## User Scenarios & Testing
 
 ### User Story 1 - Canvas Drawing and Sync
@@ -62,7 +71,7 @@ All guesses are recorded in a shared guess history visible to all players via po
 
 ### User Story 4 - Drawing Synchronization (all players see canvas)
 
-The drawing canvas content is stored server-side and synchronized to all players via the existing polling mechanism. The drawer's strokes and clear actions are captured and sent to the server, and all players retrieve the current canvas state through polling.
+The drawing canvas content is stored server-side and synchronized to all players via the existing polling mechanism. The drawer's strokes and clear actions are captured and sent to the server as the full canvas state (complete array of strokes), and all players retrieve the current canvas state through polling. On each draw or clear action, the server replaces the stored canvas state entirely.
 
 **Why this priority**: Canvas sync is the mechanism that makes the drawing visible to guessers, enabling them to guess.
 
@@ -91,9 +100,9 @@ The drawing canvas content is stored server-side and synchronized to all players
 
 ### Functional Requirements
 
-- **FR-001**: The system MUST capture drawing strokes from the drawer and sync them to all players via polling.
+- **FR-001**: The system MUST capture drawing strokes from the drawer as the full canvas state and sync them to all players via polling.
 - **FR-002**: The system MUST allow the drawer to clear the canvas, resetting all strokes for all players.
-- **FR-003**: The drawing canvas state MUST be included in the room snapshot response for all players.
+- **FR-003**: The drawing canvas state (full array of strokes) MUST be included in the room snapshot response for all players.
 - **FR-004**: Guesses MUST be trimmed of leading and trailing whitespace before comparison.
 - **FR-005**: Guess comparison MUST be case-insensitive against the secret word.
 - **FR-006**: Empty or whitespace-only guesses MUST be rejected with a clear error message and not recorded.
