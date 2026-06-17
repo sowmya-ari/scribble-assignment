@@ -56,7 +56,13 @@ No tasks required.
 - [ ] T006 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/CreateRoomPage.tsx`
 - [ ] T007 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/JoinRoomPage.tsx`
 
-**Checkpoint**: US1 complete — names are trimmed and whitespace-only names rejected.
+### Tests for User Story 1
+
+- [ ] T022 [P] [US1] Add unit test for name trimming in `backend/src/services/roomStore.test.ts` — name with leading/trailing spaces is stored trimmed
+- [ ] T023 [P] [US1] Add unit test for whitespace-only rejection in `backend/src/services/roomStore.test.ts` — `createParticipant()` throws or returns error for whitespace-only name
+- [ ] T024 [P] [US1] Add integration test for Zod schema rejection in `backend/src/api/rooms.test.ts` — POST with whitespace-only name returns 400
+
+**Checkpoint**: US1 complete — names are trimmed and whitespace-only names rejected. Store and API tests cover both backend paths.
 
 ---
 
@@ -70,13 +76,13 @@ No tasks required.
 
 - [ ] T008 [US2] Update `startGame()` in `backend/src/services/roomStore.ts` to set `room.drawerId = room.hostId`, `room.secretWord = selectWord(room.code, STARTER_WORDS)`, and `room.currentRound = 1`
 - [ ] T009 [US2] Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to include `drawerId`, `roundNumber`, and conditionally include `secretWord` only when `viewerParticipantId === room.drawerId`
-- [ ] T010 [US2] Update `getRoom()` in `backend/src/services/roomStore.ts` to handle the new fields in the cloned room (no changes needed — `structuredClone` handles it automatically)
+> ℹ️ T010: No changes needed in `getRoom()` — `structuredClone` handles new fields automatically
 
 ### Frontend Implementation
 
 - [ ] T011 [P] [US2] Add `drawerId`, `roundNumber`, and `secretWord` to roomStore state exposure in `frontend/src/state/roomStore.ts`
 - [ ] T012 [P] [US2] Add `.drawer-badge` CSS class in `frontend/src/styles/app.css` (reuse `.host-badge` pattern, change text to "Drawer")
-- [ ] T013 [US2] Update `frontend/src/pages/GamePage.tsx` to display the secret word when viewer is the drawer, and show "Drawer" badge next to the drawer's name in the player list
+- [ ] T013 [US2] Update `frontend/src/pages/GamePage.tsx` to add a player list section (reusing room participants data), display the secret word as a large centered heading when viewer is the drawer, show "Drawer" badge next to the drawer's name, and show player names without badge for guessers
 
 ### Tests
 

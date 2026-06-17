@@ -44,7 +44,7 @@ When the host starts the game, a first round begins. The host is assigned as the
 **Acceptance Scenarios**:
 
 1. **Given** the host starts a game with 2 or more players in the lobby, **When** the game transitions, **Then** the host is designated as the drawer for the first round.
-2. **Given** the first round has started, **When** the drawer views the game screen, **Then** they see the secret word displayed prominently.
+2. **Given** the first round has started, **When** the drawer views the game screen, **Then** they see the secret word displayed as a large centered heading.
 3. **Given** the first round has started, **When** a guesser views the game screen, **Then** they do not see the secret word.
 4. **Given** the same room and round, **When** the word is requested, **Then** the same word is always returned (deterministic selection).
 5. **Given** the first round has started, **When** any player views the game screen, **Then** they can see who the current drawer is.
@@ -58,7 +58,7 @@ When the host starts the game, a first round begins. The host is assigned as the
 - EC-03: Room has exactly 2 players at start → host is drawer, other player is guesser
 - EC-04: Room has 8 players at start → host is drawer, all others are guessers
 - EC-05: Drawer's tab is refreshed → drawer still sees the word on reconnection
-- EC-06: Non-drawer tries to access the word via API → request returns without exposing the word
+- EC-06: Guesser tries to access the word via API → request returns without exposing the word
 
 ## Requirements *(mandatory)*
 
