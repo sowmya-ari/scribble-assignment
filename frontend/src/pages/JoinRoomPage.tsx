@@ -18,6 +18,11 @@ export function JoinRoomPage() {
 
     const code = roomCode.toUpperCase();
 
+    if (!code) {
+      setError("Please enter a room code");
+      return;
+    }
+
     if (!CODE_REGEX.test(code)) {
       setError("Room code must be 4 alphanumeric characters");
       return;
