@@ -1,19 +1,23 @@
 import { Router } from "express";
 import {
+  canvasUpdateSchema,
   createRoomSchema,
   HttpError,
   joinRoomSchema,
   leaveRoomSchema,
   roomCodeParamsSchema,
   roomViewerQuerySchema,
-  startGameSchema
+  startGameSchema,
+  submitGuessSchema
 } from "./schemas.js";
 import {
   createRoom,
   getRoom,
   joinRoom,
   leaveRoom,
+  saveCanvas,
   startGame,
+  submitGuess,
   toRoomSnapshot
 } from "../services/roomStore.js";
 import { RoomError } from "../models/game.js";
@@ -97,6 +101,38 @@ export function createRoomsRouter() {
         response.json(result);
       } catch (leaveError) {
         handleRoomError(leaveError);
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.put("/:code/canvas", (request, response, next) => {
+    try {
+      const { code } = roomCodeParamsSchema.parse(request.params);
+      const { participantId, strokes } = canvasUpdateSchema.parse(request.body);
+
+      try {
+        const result = saveCanvas(code.toUpperCase(), participantId, strokes);
+        response.json(result);
+      } catch (canvasError) {
+        handleRoomError(canvasError);
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:code/guesses", (request, response, next) => {
+    try {
+      const { code } = roomCodeParamsSchema.parse(request.params);
+      const { participantId, text } = submitGuessSchema.parse(request.body);
+
+      try {
+        const result = submitGuess(code.toUpperCase(), participantId, text);
+        response.json(result);
+      } catch (guessError) {
+        handleRoomError(guessError);
       }
     } catch (error) {
       next(error);

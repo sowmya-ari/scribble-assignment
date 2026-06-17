@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Canvas } from "../components/Canvas";
 import { Card } from "../components/Card";
 import { GuessForm } from "../components/GuessForm";
 import { ResultPanel } from "../components/ResultPanel";
 import { RoomCodeBadge } from "../components/RoomCodeBadge";
 import { Scoreboard } from "../components/Scoreboard";
+import { api, type CanvasStroke } from "../services/api";
 import { useRoomState, useRoomStore } from "../state/roomStore";
 
 const POLL_INTERVAL_MS = 2000;
@@ -14,6 +16,7 @@ export function GamePage() {
   const roomStore = useRoomStore();
   const { room, participantId, isSessionRestored } = useRoomState();
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [canvasStrokes, setCanvasStrokes] = useState<CanvasStroke[]>([]);
 
   useEffect(() => {
     if (isSessionRestored && !room) {
@@ -28,7 +31,10 @@ export function GamePage() {
 
     async function poll() {
       try {
-        await roomStore.fetchRoom();
+        const updated = await roomStore.fetchRoom();
+        if (updated) {
+          setCanvasStrokes(updated.canvasStrokes ?? []);
+        }
       } catch {
         // polling error — will retry on next interval
       }
@@ -43,6 +49,30 @@ export function GamePage() {
       }
     };
   }, [roomStore, room]);
+
+  const handleStrokesChange = useCallback(
+    async (strokes: CanvasStroke[]) => {
+      setCanvasStrokes(strokes);
+      if (!room || !participantId) return;
+      try {
+        await api.saveCanvas(room.code, participantId, strokes);
+      } catch {
+        // Canvas save failed — will retry on next draw action
+      }
+    },
+    [room, participantId]
+  );
+
+  const handleGuessSubmit = useCallback(
+    async (text: string) => {
+      if (!room || !participantId) return;
+      const result = await api.submitGuess(room.code, participantId, text);
+      if (result.success) {
+        await roomStore.fetchRoom();
+      }
+    },
+    [room, participantId, roomStore]
+  );
 
   if (!room) {
     return null;
@@ -86,11 +116,14 @@ export function GamePage() {
           <Card title="Canvas">
             {isDrawer && room.secretWord ? (
               <div className="secret-word">{room.secretWord}</div>
-            ) : (
-              <div className="canvas-placeholder" style={{ minHeight: '500px', backgroundColor: '#ffffff', border: '1px solid #e5e7eb' }}>
-                {isDrawer ? "Waiting for guessers..." : "Waiting for the drawer to draw..."}
-              </div>
-            )}
+            ) : null}
+            <Canvas
+              isDrawer={isDrawer}
+              strokes={canvasStrokes}
+              onStrokesChange={handleStrokesChange}
+              roomCode={room.code}
+              participantId={participantId}
+            />
           </Card>
         </div>
 
@@ -109,7 +142,11 @@ export function GamePage() {
           </Card>
 
           <Card title="Your Guess">
-            <GuessForm />
+            {isDrawer ? (
+              <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>You are the drawer — you cannot submit guesses.</p>
+            ) : (
+              <GuessForm onSubmitGuess={handleGuessSubmit} />
+            )}
           </Card>
         </aside>
       </div>

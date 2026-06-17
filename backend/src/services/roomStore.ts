@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Participant, Room, RoomSnapshot } from "../models/game.js";
+import type { CanvasStroke, Guess, Participant, Room, RoomSnapshot } from "../models/game.js";
 import { RoomError, MAX_PARTICIPANTS } from "../models/game.js";
 import { STARTER_ROLES, STARTER_WORDS } from "../seed/starterData.js";
 
@@ -69,6 +69,9 @@ export function createRoom(playerName: string) {
     drawerId: null,
     secretWord: null,
     currentRound: 0,
+    canvasStrokes: [],
+    guesses: [],
+    scores: {},
     createdAt: now(),
     updatedAt: now()
   };
@@ -129,6 +132,9 @@ export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSn
     drawerId: room.drawerId,
     secretWord: room.status === "lobby" ? null : isDrawer ? room.secretWord : undefined,
     roundNumber: room.currentRound,
+    canvasStrokes: room.canvasStrokes ?? [],
+    guesses: room.guesses ?? [],
+    scores: room.scores ?? {},
     availableWords: listWords(),
     roles: [...STARTER_ROLES]
   };
@@ -166,6 +172,73 @@ export function leaveRoom(code: string, participantId: string) {
   rooms.set(room.code, cloneRoom(room));
 
   return { success: true, deleted: false, newHostId: room.hostId };
+}
+
+export function saveCanvas(code: string, participantId: string, strokes: CanvasStroke[]) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    throw new RoomError("NOT_FOUND", "Room not found");
+  }
+
+  if (room.drawerId !== participantId) {
+    throw new RoomError("FORBIDDEN", "Only the drawer can update the canvas");
+  }
+
+  room.canvasStrokes = strokes;
+  room.updatedAt = now();
+  rooms.set(room.code, cloneRoom(room));
+
+  return { success: true };
+}
+
+export function submitGuess(code: string, participantId: string, text: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    throw new RoomError("NOT_FOUND", "Room not found");
+  }
+
+  if (room.status !== "playing") {
+    throw new RoomError("INVALID_STATE", "Game is not in progress");
+  }
+
+  if (room.drawerId === participantId) {
+    throw new RoomError("FORBIDDEN", "Drawer cannot submit guesses");
+  }
+
+  if (!room.secretWord) {
+    throw new RoomError("INVALID_STATE", "No secret word set");
+  }
+
+  const trimmed = text.trim();
+  if (trimmed.length === 0) {
+    throw new RoomError("INVALID_INPUT", "Guess cannot be empty");
+  }
+
+  const isCorrect = trimmed.toLowerCase() === room.secretWord.toLowerCase();
+
+  const guess: Guess = {
+    participantId,
+    text: trimmed,
+    isCorrect,
+    timestamp: now()
+  };
+
+  room.guesses.push(guess);
+
+  if (isCorrect && (room.scores[participantId] ?? 0) < 100) {
+    room.scores[participantId] = 100;
+  }
+
+  if (!isCorrect && !(participantId in room.scores)) {
+    room.scores[participantId] = 0;
+  }
+
+  room.updatedAt = now();
+  rooms.set(room.code, cloneRoom(room));
+
+  return { success: true, isCorrect, guess };
 }
 
 export function startGame(code: string, participantId: string) {

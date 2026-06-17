@@ -20,7 +20,7 @@
 
 **Purpose**: Verify project state is clean before feature work begins.
 
-- [ ] T001 Verify both backend and frontend build and type-check without errors (`cd backend && npx tsc --noEmit`, `cd frontend && npx tsc --noEmit`)
+- [x] T001 Verify both backend and frontend build and type-check without errors (`cd backend && npx tsc --noEmit`, `cd frontend && npx tsc --noEmit`)
 
 ---
 
@@ -30,12 +30,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Add `CanvasStroke` and `Guess` interfaces to `backend/src/models/game.ts`
-- [ ] T003 [P] Extend `Room` interface in `backend/src/models/game.ts` with `canvasStrokes: CanvasStroke[]`, `guesses: Guess[]`, `scores: Record<string, number>`
-- [ ] T004 [P] Extend `RoomSnapshot` interface in `backend/src/models/game.ts` with `canvasStrokes: CanvasStroke[]`, `guesses: Guess[]`, `scores: Record<string, number>`
-- [ ] T005 [P] Extend frontend `RoomSnapshot` interface in `frontend/src/services/api.ts` with `canvasStrokes`, `guesses`, `scores`
-- [ ] T006 Initialize `canvasStrokes`, `guesses`, `scores` fields in `startGame()` in `backend/src/services/roomStore.ts`
-- [ ] T007 Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to include `canvasStrokes`, `guesses`, `scores`
+- [x] T002 [P] Add `CanvasStroke` and `Guess` interfaces to `backend/src/models/game.ts`
+- [x] T003 [P] Extend `Room` interface in `backend/src/models/game.ts` with `canvasStrokes: CanvasStroke[]`, `guesses: Guess[]`, `scores: Record<string, number>`
+- [x] T004 [P] Extend `RoomSnapshot` interface in `backend/src/models/game.ts` with `canvasStrokes: CanvasStroke[]`, `guesses: Guess[]`, `scores: Record<string, number>`
+- [x] T005 [P] Extend frontend `RoomSnapshot` interface in `frontend/src/services/api.ts` with `canvasStrokes`, `guesses`, `scores`
+- [x] T006 Initialize `canvasStrokes`, `guesses`, `scores` fields in `createRoom()` in `backend/src/services/roomStore.ts`
+- [x] T007 Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to include `canvasStrokes`, `guesses`, `scores`
 
 **Checkpoint**: Foundation ready — data models extended, snapshots include new fields. User story implementation can now begin.
 
@@ -49,21 +49,21 @@
 
 ### Backend Implementation
 
-- [ ] T008 [P] [US1] Add `canvasUpdateSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`, `strokes: CanvasStroke[]`)
-- [ ] T009 [P] [US1] Implement `saveCanvas(code: string, participantId: string, strokes: CanvasStroke[])` service in `backend/src/services/roomStore.ts` — replaces `room.canvasStrokes`, validates participantId matches drawerId
-- [ ] T010 [US1] Add `PUT /rooms/:code/canvas` route in `backend/src/api/rooms.ts` using `canvasUpdateSchema` and `saveCanvas()`
+- [x] T008 [P] [US1] Add `canvasUpdateSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`, `strokes: CanvasStroke[]`)
+- [x] T009 [P] [US1] Implement `saveCanvas(code: string, participantId: string, strokes: CanvasStroke[])` service in `backend/src/services/roomStore.ts` — replaces `room.canvasStrokes`, validates participantId matches drawerId
+- [x] T010 [US1] Add `PUT /rooms/:code/canvas` route in `backend/src/api/rooms.ts` using `canvasUpdateSchema` and `saveCanvas()`
 
 ### Frontend Implementation
 
-- [ ] T011 [P] [US1] Create `Canvas` drawing component in `frontend/src/components/Canvas.tsx` — HTML Canvas 2D with pointer events, freehand stroke capture, full-state POST on each stroke end
-- [ ] T012 [P] [US1] Add `saveCanvas(code: string, participantId: string, strokes: CanvasStroke[])` method to API service in `frontend/src/services/api.ts`
-- [ ] T013 [US1] Integrate `Canvas` component into `GamePage` in `frontend/src/pages/GamePage.tsx` — show canvas in game area, pass drawer/guesser context, render received strokes on poll
-- [ ] T014 [US1] Add clear canvas button to `Canvas` component in `frontend/src/components/Canvas.tsx` — POSTs empty stroke array on clear
+- [x] T011 [P] [US1] Create `Canvas` drawing component in `frontend/src/components/Canvas.tsx` — HTML Canvas 2D with pointer events, freehand stroke capture, full-state POST on each stroke end
+- [x] T012 [P] [US1] Add `saveCanvas(code: string, participantId: string, strokes: CanvasStroke[])` method to API service in `frontend/src/services/api.ts`
+- [x] T013 [US1] Integrate `Canvas` component into `GamePage` in `frontend/src/pages/GamePage.tsx` — show canvas in game area, pass drawer/guesser context, render received strokes on poll
+- [x] T014 [US1] Add clear canvas button to `Canvas` component in `frontend/src/components/Canvas.tsx` — POSTs empty stroke array on clear
 
 ### Backend Tests
 
-- [ ] T015 [P] [US1] Unit tests for `saveCanvas()` in `backend/src/services/roomStore.test.ts` — drawer can save, non-drawer rejected, empty array clears
-- [ ] T016 [P] [US1] Unit tests for `canvasUpdateSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId, invalid strokes
+- [x] T015 [P] [US1] Unit tests for `saveCanvas()` in `backend/src/services/roomStore.test.ts` — drawer can save, non-drawer rejected, empty array clears
+- [x] T016 [P] [US1] Unit tests for `canvasUpdateSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId, invalid strokes
 
 **Checkpoint**: At this point, Canvas Drawing and Sync works end-to-end — drawer draws, guessers see, clear propagates.
 

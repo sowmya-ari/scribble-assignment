@@ -6,6 +6,20 @@ export interface Participant {
   joinedAt: string;
 }
 
+export interface CanvasStroke {
+  id: string;
+  points: { x: number; y: number }[];
+  color: string;
+  width: number;
+}
+
+export interface Guess {
+  participantId: string;
+  text: string;
+  isCorrect: boolean;
+  timestamp: string;
+}
+
 export interface RoomSnapshot {
   code: string;
   status: "lobby" | "playing";
@@ -14,6 +28,9 @@ export interface RoomSnapshot {
   drawerId: string | null;
   secretWord?: string | null;
   roundNumber: number;
+  canvasStrokes: CanvasStroke[];
+  guesses: Guess[];
+  scores: Record<string, number>;
   availableWords: string[];
   roles: ParticipantRole[];
 }
@@ -21,6 +38,12 @@ export interface RoomSnapshot {
 export interface RoomSessionResponse {
   participantId: string;
   room: RoomSnapshot;
+}
+
+export interface GuessSubmissionResponse {
+  success: boolean;
+  isCorrect: boolean;
+  guess: Guess;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
@@ -72,6 +95,18 @@ export const api = {
     return request<{ success: boolean }>(`/rooms/${encodeURIComponent(code)}/start`, {
       method: "POST",
       body: JSON.stringify({ participantId })
+    });
+  },
+  saveCanvas(code: string, participantId: string, strokes: CanvasStroke[]) {
+    return request<{ success: boolean }>(`/rooms/${encodeURIComponent(code)}/canvas`, {
+      method: "PUT",
+      body: JSON.stringify({ participantId, strokes })
+    });
+  },
+  submitGuess(code: string, participantId: string, text: string) {
+    return request<GuessSubmissionResponse>(`/rooms/${encodeURIComponent(code)}/guesses`, {
+      method: "POST",
+      body: JSON.stringify({ participantId, text })
     });
   }
 };
