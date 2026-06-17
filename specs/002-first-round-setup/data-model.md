@@ -51,7 +51,7 @@ On transition to `"playing"`:
 ### Conditional Exposure
 
 - `secretWord` is `string` (the word) when requesting `participantId === drawerId`
-- `secretWord` is `undefined` when requesting `participantId !== drawerId`
+- `secretWord` is `undefined` (field omitted from JSON response) when requesting `participantId !== drawerId`
 - `secretWord` is `null` when game has not started yet (status === "lobby")
 
 ## Participant (unchanged)

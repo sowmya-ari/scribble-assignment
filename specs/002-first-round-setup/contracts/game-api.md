@@ -74,7 +74,6 @@ None. Requests are identified by `participantId` query/body parameter.
     ],
     "hostId": "uuid-1",
     "drawerId": "uuid-1",
-    "secretWord": null,
     "roundNumber": 1,
     "availableWords": ["rocket", "pizza", "castle", "guitar", "sunflower"],
     "roles": ["drawer", "guesser"]
@@ -86,7 +85,7 @@ None. Requests are identified by `participantId` query/body parameter.
 
 - `secretWord` is `null` when lobby status (game hasn't started)
 - `secretWord` is the word string when `participantId === drawerId`
-- `secretWord` is omitted/`null` when `participantId !== drawerId`
+- `secretWord` is omitted (field absent) when `participantId !== drawerId`
 - `drawerId` is `null` when lobby status
 - `drawerId` is set to the host's ID when game transitions to playing
 

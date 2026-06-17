@@ -53,7 +53,7 @@ When the host starts the game, a first round begins. The host is assigned as the
 
 ### Edge Cases
 
-- EC-01: Player name is only whitespace (spaces, tabs) → rejected with "Player name cannot be empty"
+- EC-01: Player name is only whitespace (spaces, tabs) → rejected with "Player name is required"
 - EC-02: Player name has mixed leading/trailing whitespace → trimmed to the non-whitespace portion
 - EC-03: Room has exactly 2 players at start → host is drawer, other player is guesser
 - EC-04: Room has 8 players at start → host is drawer, all others are guessers
@@ -96,7 +96,7 @@ When the host starts the game, a first round begins. The host is assigned as the
 
 - **SC-001**: Player names with leading/trailing whitespace are displayed trimmed in the lobby within 1 second of submission.
 - **SC-002**: Whitespace-only names are rejected with an error message within 1 second of submission.
-- **SC-003**: After the host starts the game, all players see the game screen with the correct drawer identified within 3 seconds (1 polling cycle).
+- **SC-003**: After the host starts the game, all players see the game screen with the correct drawer identified within 2 seconds (1 polling cycle at 2s interval).
 - **SC-004**: The drawer sees the secret word on their screen within 1 second of the game transitioning.
 - **SC-005**: Non-drawers never see the word under any condition, verified by testing direct API access.
 - **SC-006**: The word selection is deterministic — querying the word for a given room always returns the same result, verified through repeatable testing.
