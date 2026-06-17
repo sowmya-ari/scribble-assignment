@@ -20,7 +20,7 @@ When a round ends (host triggers end-of-round), all players see the result scree
 
 **Why this priority**: Without an explicit round-end mechanism, guessers never see the correct answer or final standings, which is essential for the game's competitive feedback loop.
 
-**Independent Test**: Open three browser tabs in the same room (Tab A = drawer, Tabs B and C = guessers). Have Tab B guess correctly. The host clicks "End Round". Verify all three tabs transition to a result view within 2 seconds showing: the secret word, Tab B's score of 100, Tab C's score of 0, and all guesses recorded during the round.
+**Independent Test**: Open three browser tabs in the same room (Tab A = drawer/host, Tabs B and C = guessers). Have Tab B guess correctly. The host (Tab A) clicks "End Round". Verify all three tabs transition to a result view within 2 seconds showing: the secret word, Tab B's score of 100, Tab C's score of 0, and all guesses recorded during the round.
 
 **Acceptance Scenarios**:
 

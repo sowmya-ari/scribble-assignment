@@ -46,7 +46,7 @@
 ### Backend Implementation
 
 - [ ] T004 [P] [US1] Add `endRoundSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
-- [ ] T005 [P] [US1] Implement `endRound(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "playing", transitions to "finished"
+- [ ] T005 [P] [US1] Implement `endRound(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "playing", transitions to "finished". Also add status guard to `saveCanvas()` and `submitGuess()` to reject when status is "finished" (FR-004).
 - [ ] T006 [US1] Add `POST /rooms/:code/end-round` route in `backend/src/api/rooms.ts` using `endRoundSchema` and `endRound()`
 
 ### Frontend Implementation
@@ -75,7 +75,7 @@
 ### Backend Implementation
 
 - [ ] T014 [P] [US2] Add `restartSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
-- [ ] T015 [P] [US2] Implement `restartGame(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "finished", clears round state (secretWord → null, canvasStrokes → [], guesses → [], scores → {}, drawerId → null), preserves participants
+- [ ] T015 [P] [US2] Implement `restartGame(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "finished", clears round state (secretWord → null, canvasStrokes → [], guesses → [], scores → {}, drawerId → null, currentRound → 0), preserves participants
 - [ ] T016 [US2] Add `POST /rooms/:code/restart` route in `backend/src/api/rooms.ts` using `restartSchema` and `restartGame()`
 
 ### Frontend Implementation

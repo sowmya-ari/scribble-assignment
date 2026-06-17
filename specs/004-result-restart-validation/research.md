@@ -48,9 +48,8 @@ On restart, the following fields are reset:
 - `canvasStrokes` → `[]`
 - `guesses` → `[]`
 - `scores` → `{}`
-- `currentRound` → maintain or reset? Decision: reset to 0 (new game). The spec assumes restart creates a fresh game state.
-
-Wait, actually currentRound is interesting. If we restart to lobby and the host starts a new game, `startGame` would set currentRound to 1. So restart should reset to 0 (or not touch it, and let startGame set it). I'll follow the existing pattern — startGame sets currentRound, so restart just clears round data.
+- `drawerId` → `null`
+- `currentRound` → `0` (startGame will set it to 1 when a new game begins)
 
 ### 4. Secret Word Visibility on Result Screen
 
