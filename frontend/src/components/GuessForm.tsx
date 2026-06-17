@@ -55,6 +55,7 @@ export function GuessForm({ disabled = false, onSubmitGuess }: GuessFormProps) {
       </label>
       {error ? <p className="form__error" style={{ color: "#dc2626", fontSize: "0.875rem", marginTop: "4px" }}>{error}</p> : null}
       {lastResult === "correct" ? <p style={{ color: "#16a34a", fontSize: "0.875rem", marginTop: "4px" }}>Correct!</p> : null}
+      {lastResult === "incorrect" ? <p style={{ color: "#dc2626", fontSize: "0.875rem", marginTop: "4px" }}>Incorrect</p> : null}
       <div className="button-row button-row--compact">
         <button className="button button--primary" type="submit" disabled={disabled || isSubmitting || guessText.trim().length === 0}>
           {isSubmitting ? "Submitting..." : "Submit Guess"}

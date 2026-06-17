@@ -91,7 +91,7 @@ export function joinRoom(code: string, playerName: string) {
     throw new RoomError("NOT_FOUND", "Room not found");
   }
 
-  if (room.status !== "lobby") {
+  if (room.status !== "lobby" && room.status !== "finished") {
     throw new RoomError("ROOM_CLOSED", "Room is no longer accepting players");
   }
 
@@ -130,7 +130,10 @@ export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSn
     participants: room.participants.map((participant) => ({ ...participant })),
     hostId: room.hostId,
     drawerId: room.drawerId,
-    secretWord: room.status === "lobby" ? null : isDrawer ? room.secretWord : undefined,
+    secretWord: room.status === "lobby" ? null
+      : room.status === "finished" ? room.secretWord
+      : isDrawer ? room.secretWord
+      : undefined,
     roundNumber: room.currentRound,
     canvasStrokes: room.canvasStrokes ?? [],
     guesses: room.guesses ?? [],
@@ -181,6 +184,10 @@ export function saveCanvas(code: string, participantId: string, strokes: CanvasS
     throw new RoomError("NOT_FOUND", "Room not found");
   }
 
+  if (room.status !== "playing") {
+    throw new RoomError("INVALID_STATE", "Round has ended");
+  }
+
   if (room.drawerId !== participantId) {
     throw new RoomError("FORBIDDEN", "Only the drawer can update the canvas");
   }
@@ -192,11 +199,73 @@ export function saveCanvas(code: string, participantId: string, strokes: CanvasS
   return { success: true };
 }
 
+export function endRound(code: string, participantId: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    throw new RoomError("NOT_FOUND", "Room not found");
+  }
+
+  if (room.hostId !== participantId) {
+    throw new RoomError("FORBIDDEN", "Only the host can end the round");
+  }
+
+  if (room.status === "finished") {
+    return { success: true };
+  }
+
+  if (room.status !== "playing") {
+    throw new RoomError("INVALID_STATE", "No active round to end");
+  }
+
+  room.status = "finished";
+  room.updatedAt = now();
+  rooms.set(room.code, cloneRoom(room));
+
+  return { success: true };
+}
+
+export function restartGame(code: string, participantId: string) {
+  const room = rooms.get(code);
+
+  if (!room) {
+    throw new RoomError("NOT_FOUND", "Room not found");
+  }
+
+  if (room.hostId !== participantId) {
+    throw new RoomError("FORBIDDEN", "Only the host can restart the game");
+  }
+
+  if (room.status === "lobby") {
+    return { success: true };
+  }
+
+  if (room.status !== "finished") {
+    throw new RoomError("INVALID_STATE", "Round is still active — end it first");
+  }
+
+  room.status = "lobby";
+  room.secretWord = null;
+  room.canvasStrokes = [];
+  room.guesses = [];
+  room.scores = {};
+  room.drawerId = null;
+  room.currentRound = 0;
+  room.updatedAt = now();
+  rooms.set(room.code, cloneRoom(room));
+
+  return { success: true };
+}
+
 export function submitGuess(code: string, participantId: string, text: string) {
   const room = rooms.get(code);
 
   if (!room) {
     throw new RoomError("NOT_FOUND", "Room not found");
+  }
+
+  if (room.status === "finished") {
+    throw new RoomError("INVALID_STATE", "Round has ended");
   }
 
   if (room.status !== "playing") {

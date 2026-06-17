@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Canvas } from "../components/Canvas";
 import { Card } from "../components/Card";
 import { GuessForm } from "../components/GuessForm";
-import { ResultPanel } from "../components/ResultPanel";
+import { ResultView } from "../components/ResultView";
 import { RoomCodeBadge } from "../components/RoomCodeBadge";
 import { Scoreboard } from "../components/Scoreboard";
 import { api, type CanvasStroke } from "../services/api";
@@ -17,6 +17,7 @@ export function GamePage() {
   const { room, participantId, isSessionRestored } = useRoomState();
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [canvasStrokes, setCanvasStrokes] = useState<CanvasStroke[]>([]);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isSessionRestored && !room) {
@@ -34,6 +35,9 @@ export function GamePage() {
         const updated = await roomStore.fetchRoom();
         if (updated) {
           setCanvasStrokes(updated.canvasStrokes ?? []);
+          if (updated.status === "lobby") {
+            navigate("/lobby", { replace: true });
+          }
         }
       } catch {
         // polling error — will retry on next interval
@@ -48,7 +52,7 @@ export function GamePage() {
         clearInterval(pollingRef.current);
       }
     };
-  }, [roomStore, room]);
+  }, [roomStore, room, navigate]);
 
   const handleStrokesChange = useCallback(
     async (strokes: CanvasStroke[]) => {
@@ -75,12 +79,44 @@ export function GamePage() {
     [room, participantId, roomStore]
   );
 
+  const handleEndRound = useCallback(async () => {
+    if (!room || !participantId) return;
+    setActionError(null);
+    try {
+      await api.endRound(room.code, participantId);
+      await roomStore.fetchRoom();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to end round");
+    }
+  }, [room, participantId, roomStore]);
+
+  const handleRestart = useCallback(async () => {
+    if (!room || !participantId) return;
+    setActionError(null);
+    try {
+      await api.restartGame(room.code, participantId);
+      await roomStore.fetchRoom();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to restart game");
+    }
+  }, [room, participantId, roomStore]);
+
   if (!room) {
     return null;
   }
 
   const viewer = room.participants.find((participant) => participant.id === participantId) ?? null;
   const isDrawer = participantId !== null && participantId === room.drawerId;
+  const isHost = participantId !== null && participantId === room.hostId;
+
+  if (room.status === "finished") {
+    return (
+      <>
+        {actionError ? <p className="form__error" style={{ textAlign: "center", margin: "16px auto", maxWidth: "400px" }}>{actionError}</p> : null}
+        <ResultView room={room} participantId={participantId} onRestart={handleRestart} />
+      </>
+    );
+  }
 
   return (
     <section className="panel game-page">
@@ -110,7 +146,6 @@ export function GamePage() {
             </ul>
           </Card>
           <Scoreboard />
-          <ResultPanel />
         </aside>
 
         <div className="game-page__main">
@@ -152,7 +187,14 @@ export function GamePage() {
         </aside>
       </div>
 
+      {actionError ? <p className="form__error">{actionError}</p> : null}
+
       <div className="button-row">
+        {isHost ? (
+          <button className="button button--primary" onClick={handleEndRound}>
+            End Round
+          </button>
+        ) : null}
         <button className="button button--secondary" onClick={() => navigate("/lobby")}>
           Exit Game
         </button>

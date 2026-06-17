@@ -41,6 +41,13 @@ You are working on a monolithic repository for a multiplayer drawing game ("Scri
 -   Do not output large blocks of code if a small change suffices.
 -   When creating or editing files, ensure consistency with the existing directory structure detailed above.
 
+## Bug Fix Workflow
+When fixing bugs or adding features, follow this order before writing code:
+1. **Spec first**: Update `specs/<feature>/spec.md` (add/update functional requirements, edge cases, acceptance scenarios)
+2. **Plan/contracts**: Update `plan.md`, `contracts/api.md`, `data-model.md`, `research.md` if the bug affects design decisions
+3. **Tasks**: Update `tasks.md` with the fix task, including test expectations
+4. **Implement**: Only after the above are updated
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan:

@@ -20,7 +20,7 @@
 
 **Purpose**: Verify project state is clean before feature work begins.
 
-- [ ] T001 Verify both backend and frontend build and type-check without errors (`cd backend && npx tsc --noEmit`, `cd frontend && npx tsc --noEmit`)
+- [x] T001 Verify both backend and frontend build and type-check without errors (`cd backend && npx tsc --noEmit`, `cd frontend && npx tsc --noEmit`)
 
 ---
 
@@ -30,8 +30,8 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T002 [P] Add `"finished"` to `RoomStatus` type in `backend/src/models/game.ts` (change to `"lobby" | "playing" | "finished"`)
-- [ ] T003 [P] Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to handle `"finished"` status — `secretWord` is visible to ALL players (not just drawer) when status is `"finished"`
+- [x] T002 [P] Add `"finished"` to `RoomStatus` type in `backend/src/models/game.ts` (change to `"lobby" | "playing" | "finished"`)
+- [x] T003 [P] Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to handle `"finished"` status — `secretWord` is visible to ALL players (not just drawer) when status is `"finished"`
 
 **Checkpoint**: Foundation ready — RoomStatus includes "finished", snapshot returns correct data for finished rounds.
 
@@ -45,22 +45,22 @@
 
 ### Backend Implementation
 
-- [ ] T004 [P] [US1] Add `endRoundSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
-- [ ] T005 [P] [US1] Implement `endRound(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "playing", transitions to "finished". Also add status guard to `saveCanvas()` and `submitGuess()` to reject when status is "finished" (FR-004).
-- [ ] T006 [US1] Add `POST /rooms/:code/end-round` route in `backend/src/api/rooms.ts` using `endRoundSchema` and `endRound()`
+- [x] T004 [P] [US1] Add `endRoundSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
+- [x] T005 [P] [US1] Implement `endRound(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "playing", transitions to "finished". Also add status guard to `saveCanvas()` and `submitGuess()` to reject when status is "finished" (FR-004).
+- [x] T006 [US1] Add `POST /rooms/:code/end-round` route in `backend/src/api/rooms.ts` using `endRoundSchema` and `endRound()`
 
 ### Frontend Implementation
 
-- [ ] T007 [P] [US1] Add `endRound(code: string, participantId: string)` method to API service in `frontend/src/services/api.ts`
-- [ ] T008 [P] [US1] Create `GuessHistory` component in `frontend/src/components/GuessHistory.tsx` — renders list of guesses from `room.guesses`, shows participant name, guess text, correct/incorrect indicator
-- [ ] T009 [P] [US1] Update `Scoreboard` component in `frontend/src/components/Scoreboard.tsx` to display real scores from `room.scores` alongside participant names, sorted by score descending
-- [ ] T010 [P] [US1] Create `ResultView` component in `frontend/src/components/ResultView.tsx` — displays secret word, final scores (via Scoreboard), guess history (via GuessHistory), and restart button (disabled initially, wired in US2)
-- [ ] T011 [US1] Integrate end-round button and `ResultView` into `GamePage` in `frontend/src/pages/GamePage.tsx` — host sees "End Round" button during gameplay; when status transitions to "finished", render `ResultView` instead of game UI
+- [x] T007 [P] [US1] Add `endRound(code: string, participantId: string)` method to API service in `frontend/src/services/api.ts`
+- [x] T008 [P] [US1] Create `GuessHistory` component in `frontend/src/components/GuessHistory.tsx` — renders list of guesses from `room.guesses`, shows participant name, guess text, correct/incorrect indicator
+- [x] T009 [P] [US1] Update `Scoreboard` component in `frontend/src/components/Scoreboard.tsx` to display real scores from `room.scores` alongside participant names, sorted by score descending
+- [x] T010 [P] [US1] Create `ResultView` component in `frontend/src/components/ResultView.tsx` — displays secret word, final scores (via Scoreboard), guess history (via GuessHistory), and restart button (disabled initially, wired in US2)
+- [x] T011 [US1] Integrate end-round button and `ResultView` into `GamePage` in `frontend/src/pages/GamePage.tsx` — host sees "End Round" button during gameplay; when status transitions to "finished", render `ResultView` instead of game UI
 
 ### Backend Tests
 
-- [ ] T012 [P] [US1] Unit tests for `endRound()` in `backend/src/services/roomStore.test.ts` — host can end round, non-host rejected, wrong status rejected, finished → finished is no-op
-- [ ] T013 [P] [US1] Unit tests for `endRoundSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId
+- [x] T012 [P] [US1] Unit tests for `endRound()` in `backend/src/services/roomStore.test.ts` — host can end round, non-host rejected, wrong status rejected, finished → finished is no-op
+- [x] T013 [P] [US1] Unit tests for `endRoundSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId
 
 **Checkpoint**: At this point, host can end a round and all players see the result view with secret word, scores, and guess history.
 
@@ -74,19 +74,19 @@
 
 ### Backend Implementation
 
-- [ ] T014 [P] [US2] Add `restartSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
-- [ ] T015 [P] [US2] Implement `restartGame(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "finished", clears round state (secretWord → null, canvasStrokes → [], guesses → [], scores → {}, drawerId → null, currentRound → 0), preserves participants
-- [ ] T016 [US2] Add `POST /rooms/:code/restart` route in `backend/src/api/rooms.ts` using `restartSchema` and `restartGame()`
+- [x] T014 [P] [US2] Add `restartSchema` Zod schema in `backend/src/api/schemas.ts` (validates `participantId: string`)
+- [x] T015 [P] [US2] Implement `restartGame(code: string, participantId: string)` service in `backend/src/services/roomStore.ts` — validates host, validates status is "finished", clears round state (secretWord → null, canvasStrokes → [], guesses → [], scores → {}, drawerId → null, currentRound → 0), preserves participants
+- [x] T016 [US2] Add `POST /rooms/:code/restart` route in `backend/src/api/rooms.ts` using `restartSchema` and `restartGame()`
 
 ### Frontend Implementation
 
-- [ ] T017 [P] [US2] Add `restartGame(code: string, participantId: string)` method to API service in `frontend/src/services/api.ts`
-- [ ] T018 [US2] Wire "Restart Game" button in `frontend/src/components/ResultView.tsx` — calls `api.restartGame()`, on success the lobby is rendered automatically via polling
+- [x] T017 [P] [US2] Add `restartGame(code: string, participantId: string)` method to API service in `frontend/src/services/api.ts`
+- [x] T018 [US2] Wire "Restart Game" button in `frontend/src/components/ResultView.tsx` — calls `api.restartGame()`, on success the lobby is rendered automatically via polling
 
 ### Backend Tests
 
-- [ ] T019 [P] [US2] Unit tests for `restartGame()` in `backend/src/services/roomStore.test.ts` — host can restart, state cleared, participants preserved, non-host rejected, wrong status rejected, lobby → lobby is no-op
-- [ ] T020 [P] [US2] Unit tests for `restartSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId
+- [x] T019 [P] [US2] Unit tests for `restartGame()` in `backend/src/services/roomStore.test.ts` — host can restart, state cleared, participants preserved, non-host rejected, wrong status rejected, lobby → lobby is no-op
+- [x] T020 [P] [US2] Unit tests for `restartSchema` in `backend/src/api/schemas.test.ts` — valid body, missing participantId
 
 **Checkpoint**: At this point, all user stories are functional — round ends with result display, restart returns to lobby with participants preserved.
 
@@ -96,10 +96,10 @@
 
 **Purpose**: Edge cases, error states, and final validation.
 
-- [ ] T021 Handle end-round/restart failure in frontend — show error message if action fails (e.g., network error, non-host attempt)
-- [ ] T022 Add CSS styles for result view, guess history, scoreboard updates in `frontend/src/app.css`
-- [ ] T023 Run full test suite: `cd backend && npx vitest run && cd ../frontend && npx vitest run`
-- [ ] T024 Run quickstart.md validation scenarios — end round, result display, restart to lobby, authorization, host refresh
+- [x] T021 Handle end-round/restart failure in frontend — show error message if action fails (e.g., network error, non-host attempt)
+- [x] T022 Add CSS styles for result view, guess history, scoreboard updates in `frontend/src/app.css`
+- [x] T023 Run full test suite: `cd backend && npx vitest run && cd ../frontend && npx vitest run` (backend: 64 passed, frontend: 3 passed)
+- [x] T024 Run quickstart.md validation scenarios — end round, result display, restart to lobby, authorization, host refresh (all 11 steps passed)
 
 ---
 

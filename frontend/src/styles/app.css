@@ -578,6 +578,112 @@ input {
   font-weight: 500;
 }
 
+.result-view {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.result-view__header {
+  margin-bottom: 24px;
+}
+
+.result-view__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.result-view__layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+.result-view__secret-word {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--brand);
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.guess-history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.guess-history__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.875rem;
+}
+
+.guess-history__item:last-child {
+  border-bottom: 0;
+}
+
+.guess-history__item--correct {
+  background-color: #f0fdf4;
+  margin: 0 -12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.guess-history__name {
+  color: var(--ink-soft);
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.guess-history__text {
+  color: var(--ink);
+  flex: 1;
+}
+
+.guess-history__badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scoreboard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scoreboard__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.875rem;
+}
+
+.scoreboard__item:last-child {
+  border-bottom: 0;
+}
+
+.scoreboard__name {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.scoreboard__score {
+  color: var(--brand);
+  font-size: 1rem;
+}
+
 @media (max-width: 720px) {
   .app-shell {
     padding: 24px 16px;
@@ -585,6 +691,10 @@ input {
 
   .app-shell__header {
     display: grid;
+  }
+
+  .result-view__layout {
+    grid-template-columns: 1fr;
   }
 
   .hero,

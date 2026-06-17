@@ -2,9 +2,11 @@ import { Router } from "express";
 import {
   canvasUpdateSchema,
   createRoomSchema,
+  endRoundSchema,
   HttpError,
   joinRoomSchema,
   leaveRoomSchema,
+  restartSchema,
   roomCodeParamsSchema,
   roomViewerQuerySchema,
   startGameSchema,
@@ -12,9 +14,11 @@ import {
 } from "./schemas.js";
 import {
   createRoom,
+  endRound,
   getRoom,
   joinRoom,
   leaveRoom,
+  restartGame,
   saveCanvas,
   startGame,
   submitGuess,
@@ -133,6 +137,38 @@ export function createRoomsRouter() {
         response.json(result);
       } catch (guessError) {
         handleRoomError(guessError);
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:code/end-round", (request, response, next) => {
+    try {
+      const { code } = roomCodeParamsSchema.parse(request.params);
+      const { participantId } = endRoundSchema.parse(request.body);
+
+      try {
+        const result = endRound(code.toUpperCase(), participantId);
+        response.json(result);
+      } catch (endError) {
+        handleRoomError(endError);
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:code/restart", (request, response, next) => {
+    try {
+      const { code } = roomCodeParamsSchema.parse(request.params);
+      const { participantId } = restartSchema.parse(request.body);
+
+      try {
+        const result = restartGame(code.toUpperCase(), participantId);
+        response.json(result);
+      } catch (restartError) {
+        handleRoomError(restartError);
       }
     } catch (error) {
       next(error);

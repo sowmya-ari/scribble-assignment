@@ -46,6 +46,14 @@ export const submitGuessSchema = z.object({
   text: z.string().trim().min(1, "Guess cannot be empty")
 });
 
+export const endRoundSchema = z.object({
+  participantId: z.string().min(1, "Participant ID is required")
+});
+
+export const restartSchema = z.object({
+  participantId: z.string().min(1, "Participant ID is required")
+});
+
 export class HttpError extends Error {
   statusCode: number;
 

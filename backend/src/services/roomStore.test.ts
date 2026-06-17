@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createRoom, getRoom, joinRoom, leaveRoom, saveCanvas, selectWord, startGame, submitGuess, toRoomSnapshot } from "./roomStore.js";
+import { createRoom, endRound, getRoom, joinRoom, leaveRoom, restartGame, saveCanvas, selectWord, startGame, submitGuess, toRoomSnapshot } from "./roomStore.js";
 import { RoomError, MAX_PARTICIPANTS } from "../models/game.js";
 import { STARTER_WORDS } from "../seed/starterData.js";
 
@@ -245,5 +245,105 @@ describe("roomStore", () => {
 
   it("submitGuess rejects for unknown room", () => {
     expect(() => submitGuess("ZZZZ", "any", "test")).toThrow(RoomError);
+  });
+
+  it("endRound transitions from playing to finished when host calls it", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    const updated = getRoom(initRoom.code);
+    expect(updated!.status).toBe("finished");
+  });
+
+  it("endRound rejects non-host participant", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    const { participantId: player2Id } = joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    expect(() => endRound(initRoom.code, player2Id)).toThrow(RoomError);
+  });
+
+  it("endRound rejects when room is not playing (lobby status)", () => {
+    const { room, participantId } = createRoom("Host");
+    expect(() => endRound(room.code, participantId)).toThrow(RoomError);
+  });
+
+  it("endRound is no-op when already finished", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    expect(() => endRound(initRoom.code, participantId)).not.toThrow();
+    const updated = getRoom(initRoom.code);
+    expect(updated!.status).toBe("finished");
+  });
+
+  it("saveCanvas rejects when round has ended", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    expect(() => saveCanvas(initRoom.code, participantId, [])).toThrow(RoomError);
+  });
+
+  it("restartGame transitions from finished to lobby", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    restartGame(initRoom.code, participantId);
+    const updated = getRoom(initRoom.code);
+    expect(updated!.status).toBe("lobby");
+  });
+
+  it("restartGame clears round state", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    saveCanvas(initRoom.code, participantId, [
+      { id: "s1", points: [{ x: 0, y: 0 }, { x: 1, y: 1 }], color: "#000", width: 2 }
+    ]);
+    endRound(initRoom.code, participantId);
+    restartGame(initRoom.code, participantId);
+    const updated = getRoom(initRoom.code);
+    expect(updated!.secretWord).toBeNull();
+    expect(updated!.canvasStrokes).toEqual([]);
+    expect(updated!.guesses).toEqual([]);
+    expect(updated!.scores).toEqual({});
+    expect(updated!.drawerId).toBeNull();
+    expect(updated!.currentRound).toBe(0);
+  });
+
+  it("restartGame preserves participants", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    const { participantId: player2Id } = joinRoom(initRoom.code, "Player 2");
+    void player2Id;
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    restartGame(initRoom.code, participantId);
+    const updated = getRoom(initRoom.code);
+    expect(updated!.participants).toHaveLength(2);
+  });
+
+  it("restartGame rejects non-host participant", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    const { participantId: player2Id } = joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    endRound(initRoom.code, participantId);
+    expect(() => restartGame(initRoom.code, player2Id)).toThrow(RoomError);
+  });
+
+  it("restartGame rejects when room is still playing", () => {
+    const { room: initRoom, participantId } = createRoom("Host");
+    joinRoom(initRoom.code, "Player 2");
+    startGame(initRoom.code, participantId);
+    expect(() => restartGame(initRoom.code, participantId)).toThrow(RoomError);
+  });
+
+  it("restartGame is no-op when already in lobby", () => {
+    const { room, participantId } = createRoom("Host");
+    expect(() => restartGame(room.code, participantId)).not.toThrow();
+    const updated = getRoom(room.code);
+    expect(updated!.status).toBe("lobby");
   });
 });
