@@ -8,6 +8,14 @@
 
 **Input**: User description: "Given a game is starting and player names are trimmed (empty/whitespace-only rejected with a message), When the first round begins, Then the host (or first player) becomes the clearly-identified drawer, and the secret word (deterministically selected from the starter list) is visible only to the drawer."
 
+## Clarifications
+
+### Session 2026-06-17
+
+- Q: How does the drawer securely retrieve the secret word? → A: The room snapshot API conditionally includes the `secretWord` field only when the requesting `participantId` matches the current `drawerId`. Non-drawers receive the snapshot without the word.
+- Q: What UI treatment identifies the drawer on-screen? → A: A "Drawer" badge next to the player's name in the player list, visible to all players, reusing the existing badge pattern.
+- Q: What are the official role names? → A: "drawer" and "guesser" are the two canonical roles. All occurrences of "non-drawer" and "guest" are replaced with "guesser".
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Player Name Trimming and Validation (Priority: P1)
@@ -27,17 +35,17 @@ Players should have clean display names. Leading and trailing whitespace is stri
 
 ### User Story 2 - First Round Begins with Drawer and Secret Word (Priority: P1)
 
-When the host starts the game, a first round begins. The host is assigned as the drawer for this round. A secret word is deterministically selected from the starter word list and is revealed only to the drawer. Non-drawers see the game view but not the word.
+When the host starts the game, a first round begins. The host is assigned as the drawer for this round. A secret word is deterministically selected from the starter word list and is revealed only to the drawer. Guessers see the game view but not the word. The drawer is identified by a "Drawer" badge in the player list visible to all players.
 
 **Why this priority**: This is the core transition from lobby to gameplay. Without it, no game can proceed past the lobby.
 
-**Independent Test**: Create a room with two players (Tab A host, Tab B guest). Host clicks Start Game. Tab A shows the word and a drawer badge. Tab B shows the game view but no word. Both tabs show the host as the drawer.
+**Independent Test**: Create a room with two players (Tab A host, Tab B guest). Host clicks Start Game. Tab A shows the word and a "Drawer" badge. Tab B shows the game view but no word. Both tabs show the host identified by a "Drawer" badge in the player list.
 
 **Acceptance Scenarios**:
 
 1. **Given** the host starts a game with 2 or more players in the lobby, **When** the game transitions, **Then** the host is designated as the drawer for the first round.
 2. **Given** the first round has started, **When** the drawer views the game screen, **Then** they see the secret word displayed prominently.
-3. **Given** the first round has started, **When** a non-drawer views the game screen, **Then** they do not see the secret word.
+3. **Given** the first round has started, **When** a guesser views the game screen, **Then** they do not see the secret word.
 4. **Given** the same room and round, **When** the word is requested, **Then** the same word is always returned (deterministic selection).
 5. **Given** the first round has started, **When** any player views the game screen, **Then** they can see who the current drawer is.
 
@@ -47,7 +55,7 @@ When the host starts the game, a first round begins. The host is assigned as the
 
 - EC-01: Player name is only whitespace (spaces, tabs) → rejected with "Player name cannot be empty"
 - EC-02: Player name has mixed leading/trailing whitespace → trimmed to the non-whitespace portion
-- EC-03: Room has exactly 2 players at start → host is drawer, guest is guesser
+- EC-03: Room has exactly 2 players at start → host is drawer, other player is guesser
 - EC-04: Room has 8 players at start → host is drawer, all others are guessers
 - EC-05: Drawer's tab is refreshed → drawer still sees the word on reconnection
 - EC-06: Non-drawer tries to access the word via API → request returns without exposing the word
@@ -64,13 +72,15 @@ When the host starts the game, a first round begins. The host is assigned as the
 - **FR-006**: Non-drawer players MUST NOT be able to see or infer the secret word through any API response.
 - **FR-007**: All players MUST be able to see who the current drawer is.
 - **FR-008**: The drawer MUST be able to see the secret word on the game screen.
-- **FR-009**: The game state MUST persist across page refreshes — if the drawer refreshes their browser, they still see the word.
+- **FR-009**: The game state snapshot API MUST include the `secretWord` field only when the requesting participant is the current drawer. Non-drawers MUST receive the snapshot without the word.
+- **FR-010**: The drawer MUST be identified by a "Drawer" badge next to their name in the player list, visible to all players.
+- **FR-011**: The game state MUST persist across page refreshes — if the drawer refreshes their browser, they still see the word.
 
 ### Data Requirements *(include if feature involves data)*
 
 - **Room**: { code, hostId, participants, status, currentRound, drawerId, secretWord }
 - **Round**: { number, drawerId, word, status }
-- **GameSnapshot**: { code, status, drawerId, participants, roundNumber }
+- **GameSnapshot**: { code, status, drawerId, participants, roundNumber, secretWord? } — `secretWord` is present only when the requesting participant is the drawer.
 
 ### Non-goals
 
