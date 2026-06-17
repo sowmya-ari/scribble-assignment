@@ -65,11 +65,12 @@ export function GamePage() {
 
   const handleGuessSubmit = useCallback(
     async (text: string) => {
-      if (!room || !participantId) return;
+      if (!room || !participantId) return false;
       const result = await api.submitGuess(room.code, participantId, text);
       if (result.success) {
         await roomStore.fetchRoom();
       }
+      return result.isCorrect;
     },
     [room, participantId, roomStore]
   );

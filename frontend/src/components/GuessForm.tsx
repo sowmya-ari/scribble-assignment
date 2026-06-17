@@ -2,7 +2,7 @@ import { useState } from "react";
 
 interface GuessFormProps {
   disabled?: boolean;
-  onSubmitGuess?: (text: string) => Promise<void>;
+  onSubmitGuess?: (text: string) => Promise<boolean>;
 }
 
 export function GuessForm({ disabled = false, onSubmitGuess }: GuessFormProps) {
@@ -20,9 +20,9 @@ export function GuessForm({ disabled = false, onSubmitGuess }: GuessFormProps) {
     setLastResult(null);
 
     try {
-      await onSubmitGuess(guessText);
+      const isCorrect = await onSubmitGuess(guessText);
       setGuessText("");
-      setLastResult("correct");
+      setLastResult(isCorrect ? "correct" : "incorrect");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to submit guess";
       if (message.toLowerCase().includes("empty")) {
