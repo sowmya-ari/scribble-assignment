@@ -412,6 +412,33 @@ input {
   letter-spacing: 0.05em;
 }
 
+.drawer-badge {
+  color: #059669;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 8px;
+}
+
+.secret-word {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  padding: 32px;
+  background: var(--surface-muted);
+  border-radius: 12px;
+  border: 2px dashed var(--brand);
+}
+
+.player-list__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .status-line,
 .placeholder-note {
   width: max-content;

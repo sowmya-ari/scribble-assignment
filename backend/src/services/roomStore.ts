@@ -37,13 +37,22 @@ function displayName(name?: string) {
 function createParticipant(name?: string): Participant {
   return {
     id: randomUUID(),
-    name: displayName(name),
+    name: displayName(name?.trim()),
     joinedAt: now()
   };
 }
 
 function cloneRoom(room: Room) {
   return structuredClone(room);
+}
+
+export function selectWord(roomCode: string, words: readonly string[]): string {
+  let hash = 5381;
+  for (let i = 0; i < roomCode.length; i++) {
+    hash = (hash * 33) ^ roomCode.charCodeAt(i);
+  }
+  const index = Math.abs(hash) % words.length;
+  return words[index];
 }
 
 export function listWords() {
@@ -57,6 +66,9 @@ export function createRoom(playerName: string) {
     status: "lobby",
     participants: [participant],
     hostId: participant.id,
+    drawerId: null,
+    secretWord: null,
+    currentRound: 0,
     createdAt: now(),
     updatedAt: now()
   };
@@ -107,13 +119,16 @@ export function saveRoom(room: Room) {
 }
 
 export function toRoomSnapshot(room: Room, viewerParticipantId?: string): RoomSnapshot {
-  void viewerParticipantId;
+  const isDrawer = viewerParticipantId !== undefined && viewerParticipantId === room.drawerId;
 
   return {
     code: room.code,
     status: room.status,
     participants: room.participants.map((participant) => ({ ...participant })),
     hostId: room.hostId,
+    drawerId: room.drawerId,
+    secretWord: room.status === "lobby" ? null : isDrawer ? room.secretWord : undefined,
+    roundNumber: room.currentRound,
     availableWords: listWords(),
     roles: [...STARTER_ROLES]
   };
@@ -173,6 +188,9 @@ export function startGame(code: string, participantId: string) {
   }
 
   room.status = "playing";
+  room.drawerId = room.hostId;
+  room.secretWord = selectWord(room.code, STARTER_WORDS);
+  room.currentRound = 1;
   room.updatedAt = now();
   rooms.set(room.code, cloneRoom(room));
 

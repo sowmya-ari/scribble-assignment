@@ -16,6 +16,10 @@ describe("schemas", () => {
     expect(() => createRoomSchema.parse({})).toThrow();
   });
 
+  it("createRoomSchema rejects whitespace-only playerName", () => {
+    expect(() => createRoomSchema.parse({ playerName: "   " })).toThrow();
+  });
+
   it("joinRoomSchema accepts valid body", () => {
     const result = joinRoomSchema.parse({ playerName: "Bob" });
     expect(result.playerName).toBe("Bob");
@@ -23,6 +27,10 @@ describe("schemas", () => {
 
   it("joinRoomSchema rejects empty playerName", () => {
     expect(() => joinRoomSchema.parse({ playerName: "" })).toThrow();
+  });
+
+  it("joinRoomSchema rejects whitespace-only playerName", () => {
+    expect(() => joinRoomSchema.parse({ playerName: "   " })).toThrow();
   });
 
   it("leaveRoomSchema rejects missing participantId", () => {

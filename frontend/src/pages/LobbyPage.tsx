@@ -10,15 +10,15 @@ const POLL_INTERVAL_MS = 2000;
 export function LobbyPage() {
   const navigate = useNavigate();
   const roomStore = useRoomStore();
-  const { room, participantId, error, isLoading } = useRoomState();
+  const { room, participantId, error, isLoading, isSessionRestored } = useRoomState();
   const [refreshError, setRefreshError] = useState<string | null>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (!room) {
+    if (isSessionRestored && !room) {
       navigate("/", { replace: true });
     }
-  }, [navigate, room]);
+  }, [navigate, room, isSessionRestored]);
 
   useEffect(() => {
     if (!room) {

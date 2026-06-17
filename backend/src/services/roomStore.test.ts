@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { createRoom, joinRoom, leaveRoom, startGame } from "./roomStore.js";
+import { createRoom, getRoom, joinRoom, leaveRoom, selectWord, startGame, toRoomSnapshot } from "./roomStore.js";
 import { RoomError, MAX_PARTICIPANTS } from "../models/game.js";
+import { STARTER_WORDS } from "../seed/starterData.js";
 
 describe("roomStore", () => {
   it("createRoom returns a room with a 4-character uppercase code", () => {
@@ -76,5 +77,65 @@ describe("roomStore", () => {
     const j2 = joinRoom(r2.room.code, "Extra");
     expect(r1.room.participants.length + j1.room.participants.length).toBeGreaterThan(0);
     expect(r2.room.participants.length + j2.room.participants.length).toBeGreaterThan(0);
+  });
+
+  it("createRoom trims leading and trailing whitespace from player name", () => {
+    const result = createRoom("  Alice  ");
+    expect(result.room.participants[0].name).toBe("Alice");
+  });
+
+  it("selectWord returns the same word for the same room code", () => {
+    const word1 = selectWord("ABCD", STARTER_WORDS);
+    const word2 = selectWord("ABCD", STARTER_WORDS);
+    expect(word1).toBe(word2);
+  });
+
+  it("selectWord returns different words for different room codes", () => {
+    const word1 = selectWord("ABCD", STARTER_WORDS);
+    const word2 = selectWord("WXYZ", STARTER_WORDS);
+    expect(word1).not.toBe(word2);
+  });
+
+  it("startGame assigns drawerId equal to hostId", () => {
+    const { room, participantId } = createRoom("Host");
+    joinRoom(room.code, "Player 2");
+    startGame(room.code, participantId);
+    const updated = getRoom(room.code);
+    expect(updated).not.toBeNull();
+    expect(updated!.drawerId).toBe(participantId);
+  });
+
+  it("startGame sets currentRound to 1 and secretWord to a non-null word", () => {
+    const { room, participantId } = createRoom("Host");
+    joinRoom(room.code, "Player 2");
+    startGame(room.code, participantId);
+    const updated = getRoom(room.code);
+    expect(updated).not.toBeNull();
+    expect(updated!.currentRound).toBe(1);
+    expect(updated!.secretWord).not.toBeNull();
+  });
+
+  it("toRoomSnapshot includes secretWord for the drawer", () => {
+    const { room, participantId } = createRoom("Host");
+    joinRoom(room.code, "Player 2");
+    startGame(room.code, participantId);
+    const updated = getRoom(room.code);
+    const snapshot = toRoomSnapshot(updated!, participantId);
+    expect(snapshot.secretWord).toBe(updated!.secretWord);
+  });
+
+  it("toRoomSnapshot does not include secretWord for non-drawer viewers", () => {
+    const { room, participantId: hostId } = createRoom("Host");
+    const { participantId: player2Id } = joinRoom(room.code, "Player 2");
+    startGame(room.code, hostId);
+    const updated = getRoom(room.code);
+    const snapshot = toRoomSnapshot(updated!, player2Id);
+    expect(snapshot.secretWord).toBeUndefined();
+  });
+
+  it("toRoomSnapshot returns null secretWord for lobby status", () => {
+    const { room, participantId } = createRoom("Host");
+    const snapshot = toRoomSnapshot(room, participantId);
+    expect(snapshot.secretWord).toBeNull();
   });
 });

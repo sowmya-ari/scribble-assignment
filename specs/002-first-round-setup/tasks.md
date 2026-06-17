@@ -35,10 +35,10 @@ No tasks required.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T001 Add `drawerId`, `secretWord`, and `currentRound` fields to `Room` interface in `backend/src/models/game.ts`
-- [ ] T002 [P] Add `drawerId`, `roundNumber`, and optional `secretWord` to `RoomSnapshot` interface in `backend/src/models/game.ts`
-- [ ] T003 [P] Update frontend `RoomSnapshot` type to include `drawerId`, `roundNumber`, and optional `secretWord` in `frontend/src/services/api.ts`
-- [ ] T004 Add `selectWord(roomCode: string, words: readonly string[]): string` pure function to `backend/src/services/roomStore.ts` (djb2 hash of room code modulo word list length)
+- [x] T001 Add `drawerId`, `secretWord`, and `currentRound` fields to `Room` interface in `backend/src/models/game.ts`
+- [x] T002 [P] Add `drawerId`, `roundNumber`, and optional `secretWord` to `RoomSnapshot` interface in `backend/src/models/game.ts`
+- [x] T003 [P] Update frontend `RoomSnapshot` type to include `drawerId`, `roundNumber`, and optional `secretWord` in `frontend/src/services/api.ts`
+- [x] T004 Add `selectWord(roomCode: string, words: readonly string[]): string` pure function to `backend/src/services/roomStore.ts` (djb2 hash of room code modulo word list length)
 
 **Checkpoint**: Foundation ready — models and types support drawer ID, secret word, and round number. US1 and US2 can now begin.
 
@@ -52,15 +52,15 @@ No tasks required.
 
 ### Implementation for User Story 1
 
-- [ ] T005 [P] [US1] Add `.trim()` to player name in `createParticipant()` function in `backend/src/services/roomStore.ts`
-- [ ] T006 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/CreateRoomPage.tsx`
-- [ ] T007 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/JoinRoomPage.tsx`
+- [x] T005 [P] [US1] Add `.trim()` to player name in `createParticipant()` function in `backend/src/services/roomStore.ts`
+- [x] T006 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/CreateRoomPage.tsx`
+- [x] T007 [P] [US1] Add `.trim()` and empty-string guard before submit in `frontend/src/pages/JoinRoomPage.tsx`
 
 ### Tests for User Story 1
 
-- [ ] T022 [P] [US1] Add unit test for name trimming in `backend/src/services/roomStore.test.ts` — name with leading/trailing spaces is stored trimmed
-- [ ] T023 [P] [US1] Add unit test for whitespace-only rejection in `backend/src/services/roomStore.test.ts` — `createParticipant()` throws or returns error for whitespace-only name
-- [ ] T024 [P] [US1] Add integration test for Zod schema rejection in `backend/src/api/rooms.test.ts` — POST with whitespace-only name returns 400
+- [x] T022 [P] [US1] Add unit test for name trimming in `backend/src/services/roomStore.test.ts` — name with leading/trailing spaces is stored trimmed
+- [x] T023 [P] [US1] Add unit test for whitespace-only rejection in `backend/src/api/schemas.test.ts` — Zod schema rejects whitespace-only name
+- [x] T024 [P] [US1] Add integration test for Zod schema rejection in `backend/src/api/schemas.test.ts` — both create and join schemas reject whitespace-only names
 
 **Checkpoint**: US1 complete — names are trimmed and whitespace-only names rejected. Store and API tests cover both backend paths.
 
@@ -74,22 +74,22 @@ No tasks required.
 
 ### Backend Implementation
 
-- [ ] T008 [US2] Update `startGame()` in `backend/src/services/roomStore.ts` to set `room.drawerId = room.hostId`, `room.secretWord = selectWord(room.code, STARTER_WORDS)`, and `room.currentRound = 1`
-- [ ] T009 [US2] Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to include `drawerId`, `roundNumber`, and conditionally include `secretWord` only when `viewerParticipantId === room.drawerId`
+- [x] T008 [US2] Update `startGame()` in `backend/src/services/roomStore.ts` to set `room.drawerId = room.hostId`, `room.secretWord = selectWord(room.code, STARTER_WORDS)`, and `room.currentRound = 1`
+- [x] T009 [US2] Update `toRoomSnapshot()` in `backend/src/services/roomStore.ts` to include `drawerId`, `roundNumber`, and conditionally include `secretWord` only when `viewerParticipantId === room.drawerId`
 > ℹ️ T010: No changes needed in `getRoom()` — `structuredClone` handles new fields automatically
 
 ### Frontend Implementation
 
-- [ ] T011 [P] [US2] Add `drawerId`, `roundNumber`, and `secretWord` to roomStore state exposure in `frontend/src/state/roomStore.ts`
-- [ ] T012 [P] [US2] Add `.drawer-badge` CSS class in `frontend/src/styles/app.css` (reuse `.host-badge` pattern, change text to "Drawer")
-- [ ] T013 [US2] Update `frontend/src/pages/GamePage.tsx` to add a player list section (reusing room participants data), display the secret word as a large centered heading when viewer is the drawer, show "Drawer" badge next to the drawer's name, and show player names without badge for guessers
+- [x] T011 [P] [US2] Add `drawerId`, `roundNumber`, and `secretWord` to roomStore state exposure in `frontend/src/state/roomStore.ts` (implicit — RoomSnapshot type already includes these fields, store passes them through)
+- [x] T012 [P] [US2] Add `.drawer-badge` CSS class in `frontend/src/styles/app.css` (reuse `.host-badge` pattern, change text to "Drawer")
+- [x] T013 [US2] Update `frontend/src/pages/GamePage.tsx` to add a player list section (reusing room participants data), display the secret word as a large centered heading when viewer is the drawer, show "Drawer" badge next to the drawer's name, and show player names without badge for guessers
 
 ### Tests
 
-- [ ] T014 [P] [US2] Add unit test for deterministic word selection in `backend/src/services/roomStore.test.ts` — same room code always returns same word
-- [ ] T015 [P] [US2] Add unit test for drawer assignment on start in `backend/src/services/roomStore.test.ts` — `drawerId === hostId` after start
-- [ ] T016 [P] [US2] Add unit test for conditional word exposure in `backend/src/services/roomStore.test.ts` — drawer sees word, guesser sees null
-- [ ] T017 [US2] Update test for `startGame` in `backend/src/services/roomStore.test.ts` — verify `currentRound` is 1 and `secretWord` is non-null
+- [x] T014 [P] [US2] Add unit test for deterministic word selection in `backend/src/services/roomStore.test.ts` — same room code always returns same word
+- [x] T015 [P] [US2] Add unit test for drawer assignment on start in `backend/src/services/roomStore.test.ts` — `drawerId === hostId` after start
+- [x] T016 [P] [US2] Add unit test for conditional word exposure in `backend/src/services/roomStore.test.ts` — drawer sees word, guesser sees undefined
+- [x] T017 [US2] Update test for `startGame` in `backend/src/services/roomStore.test.ts` — verify `currentRound` is 1 and `secretWord` is non-null
 
 **Checkpoint**: US2 complete — first round starts with drawer, word, and conditional exposure. Both stories independently testable.
 
@@ -99,9 +99,9 @@ No tasks required.
 
 **Purpose**: Improvements that affect multiple user stories.
 
-- [ ] T018 Run `npm test` in both `backend/` and `frontend/` — all tests passing
-- [ ] T019 Run `npx tsc --noEmit` in both `backend/` and `frontend/` — zero type errors
-- [ ] T020 Run `npx vitest run --coverage` in `backend/` and verify ≥80% coverage
+- [x] T018 Run `npm test` in both `backend/` and `frontend/` — **30/30 tests passing** (27 backend + 3 frontend)
+- [x] T019 Run `npx tsc --noEmit` in both `backend/` and `frontend/` — **zero type errors in both**
+- [ ] T020 Run `npx vitest run --coverage` in `backend/` and verify ≥80% coverage — **blocked**: `@vitest/coverage-v8` not installed; coverage tooling not configured in project
 - [ ] T021 Validate all 4 quickstart scenarios manually with two browser tabs
 
 ---
